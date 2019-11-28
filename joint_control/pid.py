@@ -8,8 +8,6 @@
     1. the motor in simulation can simple modelled by angle(t) = angle(t-1) + speed * dt
     2. use self.y to buffer model prediction
 '''
-
-# add PYTHONPATH
 import os
 import sys
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'software_installation'))
@@ -24,6 +22,7 @@ class PIDController(object):
        e.g. input is an array and output is also an array
     '''
     def __init__(self, dt, size):
+        
         '''
         @param dt: step time
         @param size: number of control values
@@ -33,12 +32,14 @@ class PIDController(object):
         self.u = np.zeros(size)
         self.e1 = np.zeros(size)
         self.e2 = np.zeros(size)
+        
         # ADJUST PARAMETERS BELOW
         delay = 0
-        self.Kp = 0
-        self.Ki = 0
-        self.Kd = 0
+        self.Kp = 41
+        self.Ki = -0.3 #-0.1
+        self.Kd = 0.1
         self.y = deque(np.zeros(size), maxlen=delay + 1)
+        #('dt: ',self.dt,'|size: ',size,'Y: ',self.y)
 
     def set_delay(self, delay):
         '''
@@ -47,13 +48,25 @@ class PIDController(object):
         self.y = deque(self.y, delay + 1)
 
     def control(self, target, sensor):
+      
+        
         '''apply PID control
         @param target: reference values
         @param sensor: current values from sensor
         @return control signal
         '''
         # YOUR CODE HERE
-
+     
+        
+        #self.e1 = 0 #previous error
+        #self.e2 = 0 #integral
+        
+        
+        error = np.subtract(target,sensor)
+        self.e2 = self.e2 + error * self.dt
+        derivative = (error - self.e1) / self.dt #maybe using y?
+        self.u = self.Kp * error + self.Ki * self.e2 + self.Kd * derivative
+        self.e1 = error
         return self.u
 
 

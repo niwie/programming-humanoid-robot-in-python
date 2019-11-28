@@ -16,7 +16,8 @@ class StandingUpAgent(PostureRecognitionAgent):
 
     def standing_up(self):
         posture = self.posture
-        # YOUR CODE HERE
+        #Todo
+         
 
 
 class TestStandingUpAgent(StandingUpAgent):

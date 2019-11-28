@@ -22,6 +22,8 @@
 
 from pid import PIDAgent
 from keyframes import hello
+from scipy.interpolate import CubicSpline
+import numpy as np
 
 
 class AngleInterpolationAgent(PIDAgent):
@@ -39,9 +41,18 @@ class AngleInterpolationAgent(PIDAgent):
         return super(AngleInterpolationAgent, self).think(perception)
 
     def angle_interpolation(self, keyframes, perception):
+        #get time from perception then interpolate by using cubic splines?
+        
         target_joints = {}
-        # YOUR CODE HERE
-
+        names,times,keys= keyframes
+        n=np.array(names)
+        k=np.array(keys)
+        t=np.array(times)
+        # oder len t?
+        for i in np.arange(0,len(n),1): 
+            poly=CubicSpline(t[i],np.array(k[:][i])[:,0])
+            result=poly(perception.time)
+            target_joints[n[i]]=result
         return target_joints
 
 if __name__ == '__main__':
