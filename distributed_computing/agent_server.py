@@ -33,20 +33,25 @@ class ServerAgent(InverseKinematicsAgent):
     
     def set_angle(self, joint_name, angle):
         self.target_joints[joint_name] = angle
-        return 1
+        #return 1
+        #errorcode should be thrown by rpchandler
         '''set target angle of joint for PID controller
         '''
         # YOUR CODE HERE
 
     def get_posture(self):
-        return self.recognize_posture(self,self.perception)
+        #return self.recognize_posture(self.perception)
+        self.posture=recognize_posture(self.perception)
+        return self.posture
         
+
         '''return current posture of robot'''
         # YOUR CODE HERE
 
     def execute_keyframes(self, keyframes):
-        self.keyframes=keyframes
-        return 1
+        self.keyframes = pickle.loads(keyframes)
+
+
         '''excute keyframes, note this function is blocking call,
         e.g. return until keyframes are executed
         '''
@@ -55,29 +60,46 @@ class ServerAgent(InverseKinematicsAgent):
     def get_transform(self, name):
         '''get transform with given name
         '''
-        return self.transforms[name]
+        #return self.transforms[name]
+        return self.local_trans(name,self.perception.joint[name])
         # YOUR CODE HERE
 
     def set_transform(self, effector_name, transform):
         '''solve the inverse kinematics and control joints use the results
         '''
-
-
+        #return self.local_trans(name,self.perception.joint[name])
+        self.set_transform(effector_name,transform)
         # YOUR CODE HERE
 
 
 
 if __name__ == '__main__':
-        #register at dns
-    server = SimpleXMLRPCServer(("localhost", 8000))
-    print "Listening on port 8000..."
-    server.register_function(self.get_angle, "get_angle")
-    server.register_function(self.set_angle, "set_angle")
-    server.register_function(self.get_posture, "get_posture")
-    server.register_function(self.execute_keyframes, "execute_keyframes")
-    server.register_function(self.get_transform, "get_transform")
-    server.register_function(self.set_transform, "set_transform")
-    server.serve_forever()
+
     agent = ServerAgent()
+    server = SimpleXMLRPCServer(("localhost", 2212))
+    server.register_introspection_functions()
+    server.register_instance(agent)
+    print ("Server on port 2212")
+    server.serve_forever()
     agent.run()
+
+
+
+
+
+
+
+
+#just there to copy and paste if needed:
+
+    #server = SimpleXMLRPCServer(("localhost", 8000))
+    #print "Listening on port 8000..."
+    #server.register_function(get_angle, "get_angle")
+    #server.register_function(set_angle, "set_angle")
+    #server.register_function(get_posture, "get_posture")
+    #server.register_function(execute_keyframes, "execute_keyframes")
+    #server.register_function(get_transform, "get_transform")
+    #server.register_function(set_transform, "set_transform")
+    #server.serve_forever()
+    
 

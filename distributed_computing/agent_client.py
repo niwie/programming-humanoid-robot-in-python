@@ -16,10 +16,14 @@ class PostHandler(object):
 
     def execute_keyframes(self, keyframes):
         '''non-blocking call of ClientAgent.execute_keyframes'''
+        thread = threading.Thread(target=self.proxy.execute_keyframes, args=[keyframes])
+        thread.start
         # YOUR CODE HERE
 
     def set_transform(self, effector_name, transform):
         '''non-blocking call of ClientAgent.set_transform'''
+        thread = threading.Thread(target=self.proxy.set_transfrom, args=[effector_name, transform])
+        thread.start
         # YOUR CODE HERE
 
 
@@ -29,12 +33,13 @@ class ClientAgent(object):
     # YOUR CODE HERE
     def __init__(self):
         self.post = PostHandler(self)
+        self.proxy = xmlrpclib.ServerProxy('http://localhost:2212')
     
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
         # YOUR CODE HERE
         try:
-            self.post.proxy.get_angle(joint_name)
+            self.proxy.get_angle(joint_name)
         except xmlrpclib.Fault as err:
         print "A fault occurred"
         print "Fault code: %d" % err.faultCode
@@ -42,7 +47,7 @@ class ClientAgent(object):
     
     def set_angle(self, joint_name, angle):
         try:
-            self.post.proxy.set_angle(joint_name)
+            self.proxy.set_angle(joint_name)
         except xmlrpclib.Fault as err:
         print "A fault occurred"
         print "Fault code: %d" % err.faultCode
@@ -55,7 +60,7 @@ class ClientAgent(object):
     def get_posture(self):
         #return value!
         try:
-            self.post.proxy.get_posture()
+            self.proxy.get_posture()
         except xmlrpclib.Fault as err:
         print "A fault occurred"
         print "Fault code: %d" % err.faultCode
@@ -65,7 +70,7 @@ class ClientAgent(object):
 
     def execute_keyframes(self, keyframes):
         try:
-            self.post.proxy.execute_keyframes(keyframes)
+            self.proxy.execute_keyframes(keyframes)
         except xmlrpclib.Fault as err:
         print "A fault occurred"
         print "Fault code: %d" % err.faultCode
@@ -78,7 +83,7 @@ class ClientAgent(object):
 
     def get_transform(self, name):
         try:
-            self.post.proxy.get_transform(name)
+            self.proxy.get_transform(name)
         except xmlrpclib.Fault as err:
         print "A fault occurred"
         print "Fault code: %d" % err.faultCode
@@ -90,7 +95,7 @@ class ClientAgent(object):
     def set_transform(self, effector_name, transform):
         #return
         try:
-            self.post.proxy.set_transform(effector_name,transform)
+            self.proxy.set_transform(effector_name,transform)
         except xmlrpclib.Fault as err:
         print "A fault occurred"
         print "Fault code: %d" % err.faultCode
@@ -101,6 +106,22 @@ class ClientAgent(object):
 
 if __name__ == '__main__':
     agent = ClientAgent()
+
+    #test get and set angle
+    print agent.get_angle("HeadYaw")
+    agent.set_angle('RHipPitch', 9.4)
+    print agent.get_angle("RHipPitch")
+    #test posture recog
+    print ("get_posture returns:",agent.get_posture())
+    print ("executing keyframe 'hello' ")
+    agent.execute_keyframes(hello())
+    print ("get_posture returns:",agent.get_posture())
+    #test tranform
+    print ("get_transform returns:",agent.get_transform('RHipPitch'))
+    #@ TODO
+    #test set transform and post handlermust be implemented and test together with bugfixes!!!!
+
+
     # TEST CODE HERE
 
 
