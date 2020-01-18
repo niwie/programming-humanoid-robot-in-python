@@ -16,6 +16,7 @@ import os
 import sys
 import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+import pickle
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'kinematics'))
 
 from inverse_kinematics import InverseKinematicsAgent
@@ -28,11 +29,14 @@ class ServerAgent(InverseKinematicsAgent):
     
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
-        self.perception.join[joint_name]
+        self.perception.joint[joint_name]
         # YOUR CODE HERE
     
     def set_angle(self, joint_name, angle):
-        self.target_joints[joint_name] = angle
+        if joint_name in self.perception.joint:
+            self.target_joints[joint_name] = angle
+        else:
+            return "joint not in self.perception.joints"
         #return 1
         #errorcode should be thrown by rpchandler
         '''set target angle of joint for PID controller
@@ -81,6 +85,7 @@ if __name__ == '__main__':
     server.register_instance(agent)
     print ("Server on port 2212")
     server.serve_forever()
+    print "down here"
     agent.run()
 
 

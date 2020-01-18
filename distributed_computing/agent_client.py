@@ -9,8 +9,14 @@
 import weakref
 import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-from keyframes import *
+
+import pickle
+import os
+import sys
 import threading
+import numpy as np
+sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'joint_control'))
+from keyframes import hello
 
 class PostHandler(object):
     '''the post hander wraps function to be excuted in parallel
@@ -45,17 +51,17 @@ class ClientAgent(object):
         try:
             self.proxy.get_angle(joint_name)
         except xmlrpclib.Fault as err:
-        print "A fault occurred"
-        print "Fault code: %d" % err.faultCode
-        print "Fault string: %s" % err.faultString
+            print "A fault occurred"
+            print "Fault code: %d" % err.faultCode
+            print "Fault string: %s" % err.faultString
     
     def set_angle(self, joint_name, angle):
         try:
-            self.proxy.set_angle(joint_name)
+            self.proxy.set_angle(joint_name, angle)
         except xmlrpclib.Fault as err:
-        print "A fault occurred"
-        print "Fault code: %d" % err.faultCode
-        print "Fault string: %s" % err.faultString
+            print "A fault occurred"
+            print "Fault code: %d" % err.faultCode
+            print "Fault string: %s" % err.faultString
     
         '''set target angle of joint for PID controller
         '''
@@ -66,9 +72,9 @@ class ClientAgent(object):
         try:
             self.proxy.get_posture()
         except xmlrpclib.Fault as err:
-        print "A fault occurred"
-        print "Fault code: %d" % err.faultCode
-        print "Fault string: %s" % err.faultString
+            print "A fault occurred"
+            print "Fault code: %d" % err.faultCode
+            print "Fault string: %s" % err.faultString
     '''return current posture of robot'''
         # YOUR CODE HERE
 
@@ -76,9 +82,9 @@ class ClientAgent(object):
         try:
             self.proxy.execute_keyframes(keyframes)
         except xmlrpclib.Fault as err:
-        print "A fault occurred"
-        print "Fault code: %d" % err.faultCode
-        print "Fault string: %s" % err.faultString
+            print "A fault occurred"
+            print "Fault code: %d" % err.faultCode
+            print "Fault string: %s" % err.faultString
     
         '''excute keyframes, note this function is blocking call,
         e.g. return until keyframes are executed
@@ -89,9 +95,9 @@ class ClientAgent(object):
         try:
             self.proxy.get_transform(name)
         except xmlrpclib.Fault as err:
-        print "A fault occurred"
-        print "Fault code: %d" % err.faultCode
-        print "Fault string: %s" % err.faultString
+            print "A fault occurred"
+            print "Fault code: %d" % err.faultCode
+            print "Fault string: %s" % err.faultString
     '''get transform with given name
         '''
         # YOUR CODE HERE
@@ -101,9 +107,9 @@ class ClientAgent(object):
         try:
             self.proxy.set_transform(effector_name,transform)
         except xmlrpclib.Fault as err:
-        print "A fault occurred"
-        print "Fault code: %d" % err.faultCode
-        print "Fault string: %s" % err.faultString
+            print "A fault occurred"
+            print "Fault code: %d" % err.faultCode
+            print "Fault string: %s" % err.faultString
     '''solve the inverse kinematics and control joints use the results
         '''
         # YOUR CODE HERE
@@ -122,7 +128,20 @@ if __name__ == '__main__':
     print ("get_posture returns:",agent.get_posture())
     #test tranform
     print ("get_transform returns:",agent.get_transform('RHipPitch'))
+
+    transform = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]])
+    agent.set_transform('HeadPitch', transform)
+
+    posthandler= PostHandler(agent)
+    print "keyframe: v2"
+    posthandler.execute_keyframes(hello())
+
+    print "set tranform: v2"
+    posthandler.set_transform('RHipPitch', transform)
+
     #@ TODO
+
+
     #test set transform and post handlermust be implemented and test together with bugfixes!!!!
 
 
