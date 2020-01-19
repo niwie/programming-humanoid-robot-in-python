@@ -130,14 +130,14 @@ if __name__ == '__main__':
     print ("get_transform returns:",agent.get_transform('RHipPitch'))
 
     transform = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]])
-    agent.set_transform('HeadPitch', transform)
+    #agent.set_transform('HeadPitch', transform)
 
     posthandler= PostHandler(agent)
     print "keyframe: v2"
     posthandler.execute_keyframes(hello())
 
     print "set tranform: v2"
-    posthandler.set_transform('RHipPitch', transform)
+    #posthandler.set_transform('RHipPitch', transform)
 
     #@ TODO
 

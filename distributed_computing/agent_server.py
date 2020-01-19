@@ -17,6 +17,7 @@ import sys
 import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import pickle
+import threading
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'kinematics'))
 
 from inverse_kinematics import InverseKinematicsAgent
@@ -45,8 +46,8 @@ class ServerAgent(InverseKinematicsAgent):
 
     def get_posture(self):
         #return self.recognize_posture(self.perception)
-        self.posture=recognize_posture(self.perception)
-        return self.posture
+        self.posture=self.recognize_posture(self.perception)
+        return ("Posture", self.posture)
         
 
         '''return current posture of robot'''
@@ -80,11 +81,14 @@ class ServerAgent(InverseKinematicsAgent):
 if __name__ == '__main__':
 
     agent = ServerAgent()
-    server = SimpleXMLRPCServer(("localhost", 2212))
+    server = SimpleXMLRPCServer(("localhost", 2212),allow_none=True)
     server.register_introspection_functions()
     server.register_instance(agent)
+    thread = threading.Thread(target=server.serve_forever)
+    thread.start()
+    #server.serve_forever()
     print ("Server on port 2212")
-    server.serve_forever()
+    
     print "down here"
     agent.run()
 
