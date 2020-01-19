@@ -88,6 +88,9 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
         'RKneePitch':(0,0,-100),
         'RAnklePitch':(0,0,-102.90),
         'RAnkleRoll':(0,0,0)}
+        #arms
+
+
          #Legs
         x=0
         y=0
@@ -142,7 +145,7 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
 
                 Tl = self.local_trans(joint, angle)
                 T=np.dot(T,Tl)
-                print(T)
+                #print(T)
                 # YOUR CODE HERE
 
                 self.transforms[joint] = T
