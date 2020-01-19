@@ -35,7 +35,7 @@ class PIDController(object):
         
         # ADJUST PARAMETERS BELOW
         delay = 0
-        self.Kp = 41
+        self.Kp = 10
         self.Ki = -0.3 #-0.1
         self.Kd = 0.1
         self.y = deque(np.zeros(size), maxlen=delay + 1)
