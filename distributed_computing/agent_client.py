@@ -49,7 +49,7 @@ class ClientAgent(object):
         '''get sensor value of given joint'''
         # YOUR CODE HERE
         try:
-            self.proxy.get_angle(joint_name)
+            return self.proxy.get_angle(joint_name)
         except xmlrpclib.Fault as err:
             print "A fault occurred"
             print "Fault code: %d" % err.faultCode
@@ -70,7 +70,7 @@ class ClientAgent(object):
     def get_posture(self):
         #return value!
         try:
-            self.proxy.get_posture()
+            return self.proxy.get_posture()
         except xmlrpclib.Fault as err:
             print "A fault occurred"
             print "Fault code: %d" % err.faultCode
@@ -93,7 +93,7 @@ class ClientAgent(object):
 
     def get_transform(self, name):
         try:
-            self.proxy.get_transform(name)
+            return self.proxy.get_transform(name)
         except xmlrpclib.Fault as err:
             print "A fault occurred"
             print "Fault code: %d" % err.faultCode
@@ -116,27 +116,31 @@ class ClientAgent(object):
 
 if __name__ == '__main__':
     agent = ClientAgent()
+    #oncomment different line if you want to test
+    T
+
 
     #test get and set angle
-    print agent.get_angle("HeadYaw")
-    agent.set_angle('RHipPitch', 9.4)
-    print agent.get_angle("RHipPitch")
+    #print agent.get_angle('HeadYaw')
+    agent.set_angle('HeadPitch', 9.4)
+    #print agent.get_angle('HeadYaw')
     #test posture recog
-    print ("get_posture returns:",agent.get_posture())
-    print ("executing keyframe 'hello' ")
-    agent.execute_keyframes(hello())
-    print ("get_posture returns:",agent.get_posture())
+    #print ("get_posture returns:",agent.get_posture())
+    
+    #print ("executing keyframe 'hello' ")
+    #agent.execute_keyframes(hello())
+    #print ("get_posture returns:",agent.get_posture())
     #test tranform
-    print ("get_transform returns:",agent.get_transform('RHipPitch'))
+    #print ("get_transform returns:",agent.get_transform('RHipPitch'))
 
-    transform = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]])
+    #transform = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]])
     #agent.set_transform('HeadPitch', transform)
 
-    posthandler= PostHandler(agent)
-    print "keyframe: v2"
-    posthandler.execute_keyframes(hello())
+    #posthandler= PostHandler(agent)
+    #print "keyframe: v2"
+    #posthandler.execute_keyframes(hello())
 
-    print "set tranform: v2"
+    #print "set tranform: v2"
     #posthandler.set_transform('RHipPitch', transform)
 
     #@ TODO
